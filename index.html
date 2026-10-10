@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ruta</title>
+<meta name="theme-color" content="#1F5F4F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Ruta">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#F5F2EC; --card:#FFFFFF; --ink:#1D2320; --soft:#5F6A64; --line:#E3DED5;
+  --brand:#1F5F4F; --brand-soft:#E3EEEA; --good:#2F7D4F; --warn:#B86E1E; --warn-soft:#FBEFDF;
+  --bad:#A63D2C; --bad-soft:#F8E4E0; --radius:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#121614; --card:#1B201E; --ink:#ECEFED; --soft:#9AA6A0; --line:#2C3330;
+    --brand:#5BB49B; --brand-soft:#1D2E29; --good:#6CC08F; --warn:#E3A35B; --warn-soft:#2F2619;
+    --bad:#E07B69; --bad-soft:#2F1D1A;
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+header{padding:calc(18px + env(safe-area-inset-top)) 20px 6px}
+header .fecha{color:var(--soft);font-size:14px}
+header h1{margin:2px 0 0;font-size:26px;letter-spacing:-.02em}
+main{padding:8px 16px 24px;max-width:560px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:12px 0}
+.card h2{font-size:15px;margin:0 0 10px;color:var(--soft);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.big{font-size:34px;font-weight:700;letter-spacing:-.02em}
+.mid{font-size:20px;font-weight:650}
+.soft{color:var(--soft)}
+.small{font-size:13px}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:7px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row b{font-variant-numeric:tabular-nums}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--bg);border-radius:12px;padding:10px 12px}
+.stat .l{font-size:12px;color:var(--soft)}
+.stat .v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:13px;font-weight:600}
+.pill.alta{background:var(--brand-soft);color:var(--brand)}
+.pill.normal{background:var(--bg);color:var(--soft);border:1px solid var(--line)}
+.pill.baja{background:var(--warn-soft);color:var(--warn)}
+.pill.minima{background:var(--bad-soft);color:var(--bad)}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:16px;font-size:17px;font-weight:650;
+  background:var(--brand);color:#fff;cursor:pointer;margin-top:10px}
+@media (prefers-color-scheme: dark){.btn{color:#0F1A16}}
+.btn.sec{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+.btn.peligro{background:var(--bad-soft);color:var(--bad)}
+.btn:disabled{opacity:.5}
+.btn.huge{padding:26px;font-size:20px;border-radius:20px}
+label{display:block;font-size:14px;color:var(--soft);margin:12px 0 4px}
+input,select,textarea{width:100%;padding:13px 12px;border:1px solid var(--line);border-radius:12px;
+  background:var(--bg);color:var(--ink);font-size:17px;font-family:inherit}
+textarea{min-height:80px}
+.check{display:flex;gap:10px;align-items:center;margin:12px 0;font-size:15px}
+.check input{width:22px;height:22px}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);
+  display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:5}
+nav button{flex:1;background:none;border:0;color:var(--soft);font-size:12px;padding:6px 0;cursor:pointer;font-family:inherit}
+nav button svg{display:block;margin:0 auto 2px;width:24px;height:24px}
+nav button.on{color:var(--brand);font-weight:650}
+.tabs{display:flex;gap:6px;margin:6px 0 2px;overflow-x:auto}
+.tabs button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;
+  padding:8px 14px;font-size:14px;cursor:pointer;white-space:nowrap;font-family:inherit}
+.tabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.bar{height:10px;border-radius:99px;background:var(--bg);overflow:hidden;margin:8px 0 4px}
+.bar i{display:block;height:100%;background:var(--brand);border-radius:99px}
+.timer{font-size:48px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;text-align:center}
+.lista .item{padding:10px 0;border-bottom:1px solid var(--line)}
+.lista .item:last-child{border-bottom:0}
+.aviso{background:var(--warn-soft);color:var(--warn);border-radius:12px;padding:10px 12px;font-size:14px;margin-top:10px}
+.ok{background:var(--brand-soft);color:var(--brand);border-radius:12px;padding:10px 12px;font-size:14px;margin-top:10px}
+.sobre{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.sobre:last-child{border-bottom:0}
+.sobre .n{font-weight:600}
+.sobre .d{font-size:13px;color:var(--soft)}
+.sobre b{font-size:18px;font-variant-numeric:tabular-nums}
+.linkbtn{background:none;border:0;color:var(--brand);font-size:14px;padding:4px 0;cursor:pointer;font-family:inherit}
+.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:var(--ink);color:var(--bg);
+  padding:10px 16px;border-radius:12px;font-size:14px;z-index:9;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+.clima{display:flex;gap:10px}
+.clima .dia{flex:1;background:var(--bg);border-radius:12px;padding:10px 12px}
+.clima .t{font-size:22px;font-weight:700}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <div class="fecha" id="hdrFecha"></div>
+  <h1 id="hdrTitulo">Ruta</h1>
+</header>
+<main id="vista"></main>
+
+<nav id="nav">
+  <button data-v="hoy" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Hoy</button>
+  <button data-v="turno"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>Turno</button>
+  <button data-v="numeros"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Números</button>
+  <button data-v="mas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>Más</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+/* ================== Datos fijos de Athens (actualizar cada agosto) ================== */
+const ATHENS = {lat:33.9519, lon:-83.3576};
+const TEMPORADAS = [
+  {ini:'2026-08-17', fin:'2026-11-20', nombre:'Fútbol y campus lleno', nivel:'alta'},
+  {ini:'2026-11-21', fin:'2026-11-29', nombre:'Acción de Gracias', nivel:'baja'},
+  {ini:'2026-11-30', fin:'2026-12-10', nombre:'Clases y exámenes', nivel:'normal'},
+  {ini:'2026-12-11', fin:'2027-01-10', nombre:'Vacaciones de invierno', nivel:'baja'},
+  {ini:'2027-01-11', fin:'2027-03-07', nombre:'Semestre de primavera', nivel:'normal'},
+  {ini:'2027-03-08', fin:'2027-03-14', nombre:'Vacaciones de primavera', nivel:'baja'},
+  {ini:'2027-03-15', fin:'2027-05-05', nombre:'Primavera hasta exámenes', nivel:'normal'},
+  {ini:'2027-05-06', fin:'2027-08-16', nombre:'Verano (sin estudiantes)', nivel:'minima'},
+  {ini:'2027-08-17', fin:'2027-11-19', nombre:'Regreso a clases', nivel:'alta'}
+];
+const PARTIDOS = [
+  {fecha:'2026-10-17', rival:'Auburn'},
+  {fecha:'2026-11-14', rival:'Missouri'},
+  {fecha:'2026-11-28', rival:'Georgia Tech'}
+];
+const IMPUESTOS_FECHAS = [
+  {fecha:'2027-01-15', cubre:'sep–dic 2026'},
+  {fecha:'2027-04-15', cubre:'ene–mar 2027'},
+  {fecha:'2027-06-15', cubre:'abr–may 2027'},
+  {fecha:'2027-09-15', cubre:'jun–ago 2027'},
+  {fecha:'2028-01-18', cubre:'sep–dic 2027'}
+];
+/* Zonas aproximadas de Athens: el centro de cada zona; un punto cae en la zona más cercana. */
+const ZONAS = [
+  {n:'Centro (Downtown)', lat:33.9585, lon:-83.3765},
+  {n:'Campus UGA', lat:33.9470, lon:-83.3770},
+  {n:'Five Points', lat:33.9405, lon:-83.3925},
+  {n:'Normaltown / Prince Ave', lat:33.9655, lon:-83.3980},
+  {n:'Beechwood / Alps', lat:33.9440, lon:-83.4170},
+  {n:'Atlanta Hwy / Epps Bridge', lat:33.9330, lon:-83.4520},
+  {n:'Eastside', lat:33.9290, lon:-83.3330},
+  {n:'East Athens', lat:33.9600, lon:-83.3480},
+  {n:'Norte (Danielsville Rd)', lat:34.0000, lon:-83.3800},
+  {n:'Oconee / Watkinsville', lat:33.8680, lon:-83.4090}
+];
+function dist(a,b){ const R=3958.8, r=x=>x*Math.PI/180; const dLa=r(b.lat-a.lat), dLo=r(b.lon-a.lon);
+  const q=Math.sin(dLa/2)**2+Math.cos(r(a.lat))*Math.cos(r(b.lat))*Math.sin(dLo/2)**2; return 2*R*Math.asin(Math.sqrt(q)); }
+function zonaDe(pt){ if(!pt) return null; let mejor=null, d=1e9; ZONAS.forEach(z=>{ const x=dist(pt,z); if(x<d){d=x;mejor=z.n;} }); return d<=5 ? mejor : 'Fuera de Athens'; }
+const NIVEL_TXT = {alta:'Temporada alta', normal:'Temporada normal', baja:'Temporada baja', minima:'Temporada más baja'};
+
+/* ================== Almacenamiento ================== */
+const KEY = 'ruta.v1';
+const DEF = {
+  ajustes:{nombre:'', lineaMensual:0, pctImpuestos:10, centavosMilla:35, pctCrecimiento:5,
+           mesesMeta:1, colchonActual:0, minMilla:1.5, minOferta:6, modoCompleto:false},
+  turnos:[], activo:null, negocios:[], semanasHechas:[]
+};
+let S;
+function cargar(){
+  try{ S = JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ S = {}; }
+  S = Object.assign(JSON.parse(JSON.stringify(DEF)), S);
+  S.ajustes = Object.assign({}, DEF.ajustes, S.ajustes||{});
+}
+function guardar(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ toast('No se pudo guardar'); } }
+cargar();
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{});
+
+/* ================== Utilidades ================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num = v => { const n = parseFloat(String(v).replace(',','.')); return isFinite(n) ? n : 0; };
+const $$ = (n, d=0) => (n<0?'−':'') + '$' + Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const m2 = n => $$(n,2);
+const mi = n => (Math.round(n*10)/10).toLocaleString('es-US') + ' mi';
+const h1 = n => (Math.round(n*10)/10).toLocaleString('es-US') + ' h';
+const DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const iso = d => { const x = new Date(d); return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`; };
+const fechaLarga = d => { const x = new Date(d); return `${DIAS[x.getDay()]} ${x.getDate()} de ${MESES[x.getMonth()]}`; };
+const fechaCorta = s => { const [y,m,d] = s.split('-').map(Number); return `${d} ${MESES[m-1].slice(0,3)}`; };
+const hora = d => new Date(d).toLocaleTimeString('es-US',{hour:'numeric',minute:'2-digit'});
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove('on'),2200); }
+function inicioSemana(d){ const x=new Date(d); x.setHours(0,0,0,0); const dd=(x.getDay()+6)%7; x.setDate(x.getDate()-dd); return x; }
+function claveSemana(d){ return iso(inicioSemana(d)); }
+
+/* ================== Cálculos ================== */
+const A = () => S.ajustes;
+function horasDe(t){ return Math.max(0,(new Date(t.fin)-new Date(t.inicio))/3.6e6); }
+function reparto(bruto, millas){
+  const a = A();
+  const impuestos = bruto*a.pctImpuestos/100;
+  const auto = millas*a.centavosMilla/100;
+  const crecimiento = bruto*a.pctCrecimiento/100;
+  return {impuestos, auto, crecimiento, paraTi: bruto-impuestos-auto-crecimiento};
+}
+function resumen(lista){
+  const r = {turnos:lista.length, bruto:0, millas:0, horas:0, entregas:0, gasolina:0};
+  r.base=0; r.propinas=0; r.promos=0; r.minActivos=0; r.conDesglose=0;
+  lista.forEach(t=>{ if (t.base!=null||t.propinas!=null){ r.conDesglose++; r.base+=num(t.base); r.propinas+=num(t.propinas); r.promos+=num(t.promos); } r.minActivos+=num(t.minActivos); r.bruto+=num(t.bruto); r.millas+=num(t.millas); r.horas+=horasDe(t); r.entregas+=num(t.entregas); r.gasolina+=num(t.gasolina); });
+  Object.assign(r, reparto(r.bruto, r.millas));
+  r.neto = r.bruto - r.impuestos - r.auto;
+  r.netoHora = r.horas ? r.neto/r.horas : 0;
+  r.brutoHora = r.horas ? r.bruto/r.horas : 0;
+  r.porMilla = r.millas ? r.bruto/r.millas : 0;
+  return r;
+}
+function periodo(tipo, ref=new Date()){
+  const d = new Date(ref);
+  let ini, fin;
+  if (tipo==='hoy'){ ini=new Date(d); ini.setHours(0,0,0,0); fin=new Date(ini); fin.setDate(fin.getDate()+1); }
+  else if (tipo==='semana'){ ini=inicioSemana(d); fin=new Date(ini); fin.setDate(fin.getDate()+7); }
+  else if (tipo==='mes'){ ini=new Date(d.getFullYear(),d.getMonth(),1); fin=new Date(d.getFullYear(),d.getMonth()+1,1); }
+  else if (tipo==='año'){ ini=new Date(d.getFullYear(),0,1); fin=new Date(d.getFullYear()+1,0,1); }
+  else { ini=new Date(0); fin=new Date(8.64e15); }
+  return S.turnos.filter(t=>{ const x=new Date(t.inicio); return x>=ini && x<fin; });
+}
+const sueldoSemanal = () => A().lineaMensual*12/52;
+const metaColchon = () => A().lineaMensual*A().mesesMeta;
+function temporadaDe(fechaIso){ return TEMPORADAS.find(t=>fechaIso>=t.ini && fechaIso<=t.fin) || null; }
+function partidoEn(fechaIso){ return PARTIDOS.find(p=>p.fecha===fechaIso) || null; }
+function proximoImpuesto(){
+  const hoy = iso(new Date());
+  return IMPUESTOS_FECHAS.find(x=>x.fecha>=hoy) || null;
+}
+function diasHasta(fechaIso){ const a=new Date(iso(new Date())+'T00:00'), b=new Date(fechaIso+'T00:00'); return Math.round((b-a)/864e5); }
+
+const estadoDe = p => p.estado || 'entregado';
+const entregadosDe = t => (t.pedidos||[]).filter(p=>estadoDe(p)==='entregado');
+function operaciones(lista){
+  const viajes = lista.flatMap(t=>(t.pedidos||[]).map(p=>({...p, _t:t})));
+  const ent = viajes.filter(p=>estadoDe(p)==='entregado'), rech = viajes.filter(p=>estadoDe(p)==='rechazado');
+  const agrupa = (arr, clave) => { const m={}; arr.forEach(p=>{ const k=clave(p); if(!k) return; const g=(m[k.toLowerCase()]=m[k.toLowerCase()]||{nombre:k,n:0,pago:0,millas:0,conMillas:0,espera:0,conEspera:0,min:0,conMin:0});
+    g.n++; g.pago+=num(p.pago); if(p.millas){g.millas+=num(p.millas); g.conMillas+=num(p.pago);} if(p.tLlega&&p.tRecoge){g.espera+=minEntre(p.tLlega,p.tRecoge); g.conEspera++;} if(p.tAcepta&&p.tEntrega){g.min+=minEntre(p.tAcepta,p.tEntrega); g.conMin++;} });
+    return Object.values(m).map(g=>({...g, prom:g.pago/g.n, porMilla:g.millas?g.conMillas/g.millas:null, espera:g.conEspera?g.espera/g.conEspera:null, porHora:g.conMin&&g.min?(g.pago*g.conMin/g.n)/(g.min/60):null})); };
+  const ofertas = arr => { const pm = arr.filter(p=>p.millas); return {n:arr.length, prom:arr.length?arr.reduce((s,p)=>s+num(p.pago),0)/arr.length:0, porMilla: pm.length? pm.reduce((s,p)=>s+num(p.pago),0)/pm.reduce((s,p)=>s+num(p.millas),0):null}; };
+  const franja = p => { const h=new Date(p.tAcepta||p.hora||p._t.inicio).getHours(); return h<11?'Mañana':h<14?'Almuerzo':h<17?'Tarde':h<21?'Cena':'Noche'; };
+  return {
+    entregados: ent.length,
+    restaurantes: agrupa(ent, p=>(p.restaurante||'').trim()).sort((a,b)=>b.n-a.n),
+    zonasEntrega: agrupa(ent, p=>p.zonaEntrega).sort((a,b)=>b.n-a.n),
+    zonasRecoge: agrupa(ent, p=>p.zonaRecoge).sort((a,b)=>b.n-a.n),
+    franjas: agrupa(ent, franja).sort((a,b)=>b.prom-a.prom),
+    aceptadas: ofertas(viajes.filter(p=>estadoDe(p)!=='rechazado')), rechazadas: ofertas(rech),
+    cancelados: viajes.filter(p=>estadoDe(p)==='cancelado').length
+  };
+}
+function patrones(){
+  const res = {listo: S.turnos.length>=5};
+  const porDia = {}, porFranja = {}, porRest = {};
+  S.turnos.forEach(t=>{
+    const h = horasDe(t); if (!h) return;
+    const r = reparto(num(t.bruto), num(t.millas));
+    const neto = num(t.bruto)-r.impuestos-r.auto;
+    const d = new Date(t.inicio).getDay();
+    (porDia[d] = porDia[d]||{neto:0,h:0}); porDia[d].neto+=neto; porDia[d].h+=h;
+    const hr = new Date(t.inicio).getHours();
+    const f = hr<11?'Mañana (antes de las 11)':hr<14?'Almuerzo (11 a 2)':hr<17?'Tarde (2 a 5)':hr<21?'Cena (5 a 9)':'Noche (después de las 9)';
+    (porFranja[f] = porFranja[f]||{neto:0,h:0}); porFranja[f].neto+=neto; porFranja[f].h+=h;
+    entregadosDe(t).forEach(p=>{ const k=(p.restaurante||'').trim(); if(!k) return; const key=k.toLowerCase();
+      (porRest[key] = porRest[key]||{nombre:k,n:0,pago:0}); porRest[key].n++; porRest[key].pago+=num(p.pago); });
+  });
+  res.dias = Object.entries(porDia).map(([d,v])=>({nombre:DIAS[d], hora:v.neto/v.h, h:v.h})).sort((a,b)=>b.hora-a.hora);
+  res.franjas = Object.entries(porFranja).map(([f,v])=>({nombre:f, hora:v.neto/v.h, h:v.h})).sort((a,b)=>b.hora-a.hora);
+  res.rest = Object.values(porRest).map(r=>({...r, prom:r.pago/r.n})).sort((a,b)=>b.n-a.n);
+  return res;
+}
+
+/* ================== Clima (Open-Meteo, sin clave) ================== */
+const CODIGOS = {0:'Despejado',1:'Mayormente despejado',2:'Parcialmente nublado',3:'Nublado',45:'Niebla',48:'Niebla',
+  51:'Llovizna',53:'Llovizna',55:'Llovizna fuerte',61:'Lluvia ligera',63:'Lluvia',65:'Lluvia fuerte',
+  71:'Nieve ligera',73:'Nieve',75:'Nieve fuerte',80:'Chubascos',81:'Chubascos',82:'Chubascos fuertes',95:'Tormenta',96:'Tormenta',99:'Tormenta'};
+async function clima(){
+  const cache = JSON.parse(localStorage.getItem('ruta.clima')||'null');
+  if (cache && Date.now()-cache.t < 3*3600e3) return cache.d;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${ATHENS.lat}&longitude=${ATHENS.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&timezone=America%2FNew_York&forecast_days=2`;
+  try{
+    const r = await fetch(url); if(!r.ok) throw 0;
+    const j = await r.json();
+    const d = j.daily.time.map((f,i)=>({fecha:f, codigo:j.daily.weather_code[i], max:j.daily.temperature_2m_max[i], min:j.daily.temperature_2m_min[i], lluvia:j.daily.precipitation_probability_max[i]}));
+    localStorage.setItem('ruta.clima', JSON.stringify({t:Date.now(), d}));
+    return d;
+  }catch(e){ return cache ? cache.d : null; }
+}
+
+/* ================== Navegación ================== */
+let vistaActual = 'hoy';
+function ir(v){ vistaActual=v; document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on', b.dataset.v===v)); render(); window.scrollTo(0,0); }
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>ir(b.dataset.v));
+function render(){
+  $('#hdrFecha').textContent = fechaLarga(new Date());
+  const t = {hoy:'Hoy', turno:'Turno', numeros:'Números', mas:'Más'}[vistaActual] || 'Ruta';
+  $('#hdrTitulo').textContent = vistaActual==='hoy' ? (A().nombre ? `Hola, ${A().nombre}` : 'Hola') : t;
+  (VISTAS[vistaActual]||VISTAS.hoy)();
+}
+
+/* ================== Vistas ================== */
+const VISTAS = {};
+
+VISTAS.hoy = function(){
+  const hoy = iso(new Date()), man = iso(new Date(Date.now()+864e5));
+  const temp = temporadaDe(hoy);
+  const pHoy = partidoEn(hoy), pMan = partidoEn(man);
+  const sem = resumen(periodo('semana'));
+  const pat = patrones();
+  const imp = proximoImpuesto();
+  const meta = metaColchon();
+  let html = instalarHTML();
+
+  if (!A().lineaMensual){
+    html += `<div class="card"><h2>Primero</h2><p>Escribe tu costo de vida mínimo al mes. Con ese número la app calcula tu sueldo semanal y la meta del colchón.</p>
+      <button class="btn" onclick="ir('mas');setTimeout(()=>abrirAjustes(),0)">Ir a ajustes</button></div>`;
+  }
+  if (S.activo){
+    html += `<div class="card"><h2>Turno en curso</h2><p>Empezaste a las ${hora(S.activo.inicio)}.</p><button class="btn" onclick="ir('turno')">Ver turno</button></div>`;
+  }
+
+  html += `<div class="card"><h2>El día</h2>
+    ${temp?`<span class="pill ${temp.nivel}">${NIVEL_TXT[temp.nivel]}</span> <span class="soft small">${esc(temp.nombre)}</span>`:''}
+    ${pHoy?`<div class="ok"><b>Hoy hay partido en casa:</b> UGA contra ${esc(pHoy.rival)}. Mucha demanda en los vecindarios alrededor del estadio; evita el tráfico del estadio.</div>`:''}
+    ${pMan?`<div class="ok"><b>Mañana hay partido en casa:</b> UGA contra ${esc(pMan.rival)}. Buen día para trabajar.</div>`:''}
+    <div id="climaBox" class="clima" style="margin-top:12px"><div class="dia soft small">Cargando el clima…</div></div>
+  </div>`;
+
+  html += `<div class="card"><h2>Esta semana</h2>
+    <div class="grid2">
+      <div class="stat"><div class="l">Bruto</div><div class="v">${$$(sem.bruto)}</div></div>
+      <div class="stat"><div class="l">Neto por hora</div><div class="v">${sem.horas?m2(sem.netoHora):'—'}</div></div>
+      <div class="stat"><div class="l">Horas</div><div class="v">${h1(sem.horas)}</div></div>
+      <div class="stat"><div class="l">Millas</div><div class="v">${mi(sem.millas)}</div></div>
+    </div>
+    ${A().lineaMensual?`<p class="small soft" style="margin:10px 0 0">Tu sueldo semanal: <b>${$$(sueldoSemanal())}</b>. Llevas ${$$(Math.max(0,sem.paraTi))} disponible para ti.</p>`:''}
+  </div>`;
+
+  html += `<div class="card"><h2>Tus mejores horarios</h2>`;
+  if (!pat.listo){
+    html += `<p class="soft">Después de 5 turnos, aquí verás qué días y horarios te pagan mejor. Llevas ${S.turnos.length}.</p>`;
+  } else {
+    html += pat.dias.slice(0,3).map(d=>`<div class="row"><span>${d.nombre[0].toUpperCase()+d.nombre.slice(1)}</span><b>${m2(d.hora)}/h</b></div>`).join('');
+    html += `<div style="height:8px"></div>` + pat.franjas.slice(0,3).map(d=>`<div class="row"><span>${d.nombre}</span><b>${m2(d.hora)}/h</b></div>`).join('');
+    html += `<p class="small soft" style="margin:8px 0 0">Neto por hora (después de auto e impuestos).</p>`;
+  }
+  html += `</div>`;
+
+  html += `<div class="card"><h2>Regla de ofertas</h2>
+    <p style="margin:0">Acepta si paga al menos <b>${m2(A().minMilla)} por milla</b> y <b>${$$(A().minOferta)}</b> en total.</p></div>`;
+
+  if (meta>0){
+    const p = Math.min(100, A().colchonActual/meta*100);
+    html += `<div class="card"><h2>Colchón</h2>
+      <div class="mid">${$$(A().colchonActual)} <span class="soft small">de ${$$(meta)}</span></div>
+      <div class="bar"><i style="width:${p}%"></i></div>
+      <p class="small soft" style="margin:4px 0 0">${p>=100?'Meta cumplida. Siguiente meta: 3 meses.':'Meta: '+A().mesesMeta+' '+(A().mesesMeta==1?'mes':'meses')+' de tu costo de vida antes del verano.'}</p></div>`;
+  }
+  if (imp){
+    const dd = diasHasta(imp.fecha);
+    const sub = resumen(S.turnos).impuestos;
+    html += `<div class="card"><h2>Próximo pago de impuestos</h2>
+      <div class="mid">${fechaCorta(imp.fecha)} <span class="soft small">· en ${dd} días</span></div>
+      <p class="small soft" style="margin:6px 0 0">Cubre ${imp.cubre}. Apartado en total hasta hoy: ${$$(sub)}.</p>
+      ${dd<=14?'<div class="aviso">Faltan menos de dos semanas. Prepara el pago en IRS Direct Pay.</div>':''}</div>`;
+  }
+  $('#vista').innerHTML = html;
+
+  clima().then(d=>{
+    const box = $('#climaBox'); if(!box) return;
+    if(!d){ box.innerHTML = `<div class="dia soft small">Sin conexión: no se pudo cargar el clima.</div>`; return; }
+    box.innerHTML = d.slice(0,2).map((x,i)=>`<div class="dia"><div class="small soft">${i?'Mañana':'Hoy'}</div>
+      <div class="t">${Math.round(x.max)}° <span class="soft small">/ ${Math.round(x.min)}°</span></div>
+      <div class="small">${CODIGOS[x.codigo]||''}</div>
+      <div class="small soft">Lluvia ${x.lluvia??0}%${(x.lluvia||0)>=50?' · más pedidos':''}</div></div>`).join('');
+  });
+};
+
+/* ---------- Turno ---------- */
+let reloj = null;
+
+VISTAS.turno = function(){
+  clearInterval(reloj);
+  if (!S.activo){
+    $('#vista').innerHTML = `
+    <div class="card"><h2>Empezar</h2>
+      <div class="ok" style="margin-top:0"><b>1.</b> Abre <b>Stride</b> y empieza a grabar el viaje.<br><b>2.</b> Anota aquí el odómetro del auto.</div>
+      <label for="odoIni">Odómetro al salir</label>
+      <input id="odoIni" inputmode="decimal" placeholder="Ej. 84210">
+      <p class="small soft" style="margin:4px 0 0">Stride mide las millas; el odómetro sirve para confirmar que Stride no se perdió ninguna.</p>
+      <button class="btn huge" id="btnEmpezar">Empezar turno</button>
+    </div>
+    <div class="card"><h2>¿Se te olvidó?</h2>
+      <p class="soft" style="margin:0">Puedes agregar un turno que ya terminó.</p>
+      <button class="btn sec" id="btnPasado">Agregar turno pasado</button>
+    </div>`;
+    $('#btnEmpezar').onclick = ()=>{
+      S.activo = {id:uid(), inicio:new Date().toISOString(), odoIni: $('#odoIni').value?num($('#odoIni').value):null, pedidos:[]};
+      guardar(); toast('Turno empezado'); render();
+    };
+    $('#btnPasado').onclick = ()=>formTurno(null);
+    return;
+  }
+  const a = S.activo;
+  a.pedidos = a.pedidos || [];
+  const enCurso = a.pedidos.filter(p=>p.estado==='activo');
+  const hechos = a.pedidos.filter(p=>p.estado!=='activo');
+  const entregados = hechos.filter(p=>(p.estado||'entregado')==='entregado');
+  const totalPed = entregados.reduce((s,p)=>s+num(p.pago),0);
+  const frecuentes = patrones().rest.slice(0,6);
+  const PASOS = [['Llegué al restaurante','tLlega'],['Recogí el pedido','tRecoge'],['Entregado','tEntrega']];
+  const tarjetaViaje = p => {
+    const paso = PASOS.find(x=>!p[x[1]]);
+    const espera = p.tLlega ? Math.round(((p.tRecoge?new Date(p.tRecoge):new Date()) - new Date(p.tLlega))/60000) : null;
+    return `<div class="card" style="border:2px solid var(--brand)"><h2>Pedido en curso</h2>
+      <div class="mid">${esc(p.restaurante||'Pedido')}</div>
+      <p class="soft small" style="margin:2px 0 0">${m2(num(p.pago))}${p.millas?` · ${mi(num(p.millas))} · ${m2(num(p.pago)/num(p.millas))}/mi`:''} · aceptado ${hora(p.tAcepta)}${espera!=null?` · espera ${espera} min`:''}</p>
+      <button class="btn huge" onclick="pasoViaje('${p.id}','${paso[1]}')">${paso[0]}</button>
+      <button class="linkbtn" onclick="cancelarViaje('${p.id}')">Se canceló este pedido</button></div>`;
+  };
+  $('#vista').innerHTML = `
+    <div class="card"><h2>Turno en curso</h2>
+      <div class="timer" id="reloj">0:00:00</div>
+      <p class="soft small" style="text-align:center;margin:0">Desde las ${hora(a.inicio)}${A().modoCompleto||entregados.length?` · ${entregados.length} ${entregados.length==1?'entrega':'entregas'} · ${m2(totalPed)}`:''}</p>
+      <p class="small soft" style="text-align:center;margin:6px 0 0">¿Stride está grabando? Revísalo si no estás segura.</p>
+    </div>
+    ${A().modoCompleto ? '' : `<div class="card"><h2>Modo ligero</h2>
+      <p style="margin:0">Solo maneja. Al terminar, copia el resumen del turno que da la app Dasher.</p>
+      <button class="linkbtn" onclick="cambiarModo(true)">Anotar cada viaje hoy (modo completo)</button></div>`}
+    ${enCurso.map(tarjetaViaje).join('')}
+    ${A().modoCompleto ? `<div class="card" id="ofertaCard"><h2>${enCurso.length?'¿Otra oferta? (pedido doble)':'Llegó una oferta'}</h2>
+      <div class="grid2">
+        <div><label for="oPago">Pago ($)</label><input id="oPago" inputmode="decimal" placeholder="Ej. 8.50"></div>
+        <div><label for="oMillas">Millas</label><input id="oMillas" inputmode="decimal" placeholder="Ej. 4.2"></div>
+      </div>
+      <div id="oRegla" class="small soft" style="margin-top:6px"></div>
+      <label for="oRest">Restaurante o tienda</label><input id="oRest" placeholder="Ej. Taqueria del Sol" list="restList">
+      <datalist id="restList">${patrones().rest.slice(0,40).map(r=>`<option value="${esc(r.nombre)}">`).join('')}</datalist>
+      ${frecuentes.length?`<div class="tabs" style="flex-wrap:wrap">${frecuentes.map(r=>`<button type="button" onclick="document.getElementById('oRest').value=this.textContent">${esc(r.nombre)}</button>`).join('')}</div>`:''}
+      <div class="grid2" style="margin-top:4px">
+        <button class="btn" id="btnAcepto">Acepté</button>
+        <button class="btn sec" id="btnRechazo">Rechacé</button>
+      </div>
+      <p class="small soft" style="margin:8px 0 0">Anotar también las que rechazas enseña qué ofertas valen la pena.</p>
+      <button class="linkbtn" onclick="cambiarModo(false)">Volver al modo ligero</button>
+    </div>` : ''}
+    ${hechos.length || A().modoCompleto ? `<div class="card"><h2>Este turno</h2><div class="lista">${hechos.length?hechos.slice().reverse().map(p=>{
+      const est = p.estado||'entregado';
+      const det = est==='entregado' ? [p.tLlega&&p.tRecoge?`espera ${minEntre(p.tLlega,p.tRecoge)} min`:'', p.tAcepta&&p.tEntrega?`${minEntre(p.tAcepta,p.tEntrega)} min en total`:'', p.zonaEntrega?`entregado en ${esc(p.zonaEntrega)}`:''].filter(Boolean).join(' · ') : (est==='rechazado'?'rechazada':'cancelado');
+      return `<div class="item"><div class="row" style="border:0;padding:0"><span>${esc(p.restaurante||'Pedido')}</span><b class="${est==='entregado'?'':'soft'}">${m2(num(p.pago))}</b></div>
+      <div class="small soft">${hora(p.tAcepta||p.hora)}${p.millas?` · ${mi(num(p.millas))}`:''}${det?' · '+det:''}</div>
+      <button class="linkbtn" onclick="borrarPedido('${p.id}')">quitar</button></div>`; }).join(''):'<p class="soft small" style="margin:0">Aquí aparecen las entregas y las ofertas rechazadas.</p>'}</div></div>` : ''}
+    <button class="btn huge" id="btnTerminar">Terminar turno</button>
+    <button class="btn peligro" id="btnCancelar">Cancelar turno (no guarda nada)</button>`;
+  const tick = ()=>{ const s=Math.floor((Date.now()-new Date(a.inicio))/1000); const el=$('#reloj'); if(el) el.textContent=`${Math.floor(s/3600)}:${String(Math.floor(s%3600/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; };
+  tick(); reloj = setInterval(tick, 1000);
+  const regla = ()=>{ const pg=num($('#oPago').value), m=num($('#oMillas').value); const box=$('#oRegla');
+    if (!pg) { box.innerHTML=''; return; }
+    const ok = pg>=A().minOferta && (!m || pg/m>=A().minMilla);
+    box.innerHTML = `${m?`${m2(pg/m)} por milla · `:''}<b style="color:var(${ok?'--good':'--warn'})">${ok?'Cumple tu regla':'No cumple tu regla'}</b>`; };
+  if ($('#oPago')) { $('#oPago').oninput = regla; $('#oMillas').oninput = regla; }
+  const nuevaOferta = estado => {
+    const pg = $('#oPago').value, r = $('#oRest').value.trim();
+    if (pg==='') { toast('Escribe el pago de la oferta'); return; }
+    const v = {id:uid(), estado, restaurante:r, pago:num(pg), millas:$('#oMillas').value!==''?num($('#oMillas').value):null, tAcepta:new Date().toISOString()};
+    a.pedidos.push(v); guardar();
+    if (estado==='activo') ubicar(pt=>{ if(pt){ v.pAcepta=pt; guardar(); } });
+    toast(estado==='activo'?'Aceptada. Avísame al llegar.':'Rechazo anotado'); render();
+  };
+  if ($('#btnAcepto')) { $('#btnAcepto').onclick = ()=>nuevaOferta('activo'); $('#btnRechazo').onclick = ()=>nuevaOferta('rechazado'); }
+  $('#btnTerminar').onclick = ()=>{
+    if (a.pedidos.some(p=>p.estado==='activo') && !confirm('Hay un pedido sin marcar como entregado. ¿Terminar de todos modos?')) return;
+    a.pedidos.forEach(p=>{ if(p.estado==='activo') p.estado='entregado'; });
+    clearInterval(reloj); formTurno(a, true); };
+  $('#btnCancelar').onclick = ()=>{ if(confirm('¿Cancelar este turno? No se guardará.')){ S.activo=null; guardar(); render(); } };
+};
+window.cambiarModo = v => { A().modoCompleto = v; guardar(); toast(v?'Modo completo: anota cada oferta':'Modo ligero'); render(); };
+function minEntre(a,b){ return Math.max(0, Math.round((new Date(b)-new Date(a))/60000)); }
+function ubicar(cb){
+  if (!('geolocation' in navigator)) return cb(null);
+  navigator.geolocation.getCurrentPosition(p=>cb({lat:+p.coords.latitude.toFixed(5), lon:+p.coords.longitude.toFixed(5)}), ()=>cb(null), {enableHighAccuracy:true, timeout:12000, maximumAge:0});
+}
+window.pasoViaje = (id, campo) => {
+  const v = S.activo.pedidos.find(p=>p.id===id); if(!v) return;
+  v[campo] = new Date().toISOString();
+  if (campo==='tLlega') ubicar(pt=>{ if(pt){ v.pRecoge=pt; v.zonaRecoge=zonaDe(pt); guardar(); } });
+  if (campo==='tEntrega'){ v.estado='entregado';
+    ubicar(pt=>{ if(pt){ v.pEntrega={lat:+pt.lat.toFixed(3), lon:+pt.lon.toFixed(3)}; v.zonaEntrega=zonaDe(pt); guardar(); if(vistaActual==='turno') render(); } }); }
+  guardar(); toast(campo==='tLlega'?'Anotado. Toca cuando lo recojas.':campo==='tRecoge'?`Esperaste ${minEntre(v.tLlega||v.tAcepta,v.tRecoge)} min`:'Entregado'); render();
+};
+window.cancelarViaje = id => { const v=S.activo.pedidos.find(p=>p.id===id); if(v && confirm('¿Se canceló este pedido?')){ v.estado='cancelado'; guardar(); render(); } };
+window.borrarPedido = id => { S.activo.pedidos = S.activo.pedidos.filter(p=>p.id!==id); guardar(); render(); };
+
+function aLocal(isoStr){ const d=new Date(isoStr); const z=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}`; }
+
+function formTurno(base, desdeActivo=false){
+  clearInterval(reloj);
+  const t = base || {};
+  const ahora = new Date();
+  const inicio = t.inicio || new Date(ahora - 3*3600e3).toISOString();
+  const fin = desdeActivo ? ahora.toISOString() : (t.fin || ahora.toISOString());
+  const sumaPed = entregadosDe(t).reduce((s,p)=>s+num(p.pago),0);
+  const minViajes = entregadosDe(t).filter(p=>p.tAcepta&&p.tEntrega).reduce((s,p)=>s+minEntre(p.tAcepta,p.tEntrega),0);
+  const millasSug = t.millas!=null ? t.millas : '';
+  const editando = base && !desdeActivo;
+  $('#hdrTitulo').textContent = desdeActivo ? 'Cerrar turno' : editando ? 'Editar turno' : 'Turno pasado';
+  $('#vista').innerHTML = `
+  <div class="card">
+    <label for="fIni">Empezó</label><input type="datetime-local" id="fIni" value="${aLocal(inicio)}">
+    <label for="fFin">Terminó</label><input type="datetime-local" id="fFin" value="${aLocal(fin)}">
+    ${desdeActivo?'<div class="ok">Primero, detén el viaje en <b>Stride</b> y mira cuántas millas marcó.</div>':''}
+    <label for="fStride">Millas que marcó Stride</label>
+    <input id="fStride" inputmode="decimal" value="${t.stride!=null?t.stride:''}" placeholder="Ej. 58.4">
+    <div class="grid2">
+      <div><label for="fOdoI">Odómetro al salir</label><input id="fOdoI" inputmode="decimal" value="${t.odoIni!=null?t.odoIni:''}"></div>
+      <div><label for="fOdo">Odómetro al volver</label><input id="fOdo" inputmode="decimal" value="${t.odoFin!=null?t.odoFin:''}" placeholder="${t.odoIni!=null?'Ej. '+Math.round(t.odoIni+60):''}"></div>
+    </div>
+    <div id="chequeo"></div>
+    <label for="fMillas">Millas de trabajo que se guardan</label>
+    <input id="fMillas" inputmode="decimal" value="${millasSug}" placeholder="Se llena solo">
+    <div class="ok" style="margin-top:16px">Abre la app <b>Dasher → Ganancias (Earnings)</b>, toca este turno y copia su resumen: total, pago base, propinas, promociones, tiempo y entregas.</div>
+    <div class="grid2">
+      <div><label for="fBase">Pago base ($)</label><input id="fBase" inputmode="decimal" value="${t.base!=null?t.base:''}"></div>
+      <div><label for="fProp">Propinas ($)</label><input id="fProp" inputmode="decimal" value="${t.propinas!=null?t.propinas:''}"></div>
+      <div><label for="fPromo">Promociones / Peak Pay ($)</label><input id="fPromo" inputmode="decimal" value="${t.promos!=null?t.promos:''}"></div>
+      <div><label for="fActivo">Minutos activos</label><input id="fActivo" inputmode="numeric" value="${t.minActivos!=null?t.minActivos:(minViajes||'')}" placeholder="Opcional"></div>
+    </div>
+    <label for="fBruto">Ganancia total del turno ($)</label>
+    <input id="fBruto" inputmode="decimal" value="${t.bruto!=null?t.bruto:(sumaPed?sumaPed.toFixed(2):'')}" placeholder="Se suma sola, o escríbela">
+    <div id="chequeoPed"></div>
+    <label for="fEnt">Entregas (opcional)</label><input id="fEnt" inputmode="numeric" value="${t.entregas!=null?t.entregas:(entregadosDe(t).length||'')}">
+    <label for="fGas">Gasolina que pusiste hoy, si pusiste ($, opcional)</label><input id="fGas" inputmode="decimal" value="${t.gasolina||''}">
+    <label for="fNotas">Notas (opcional)</label><textarea id="fNotas" placeholder="Ej. llovió, mucho pedido en el centro">${esc(t.notas||'')}</textarea>
+    <button class="btn huge" id="fGuardar">Guardar</button>
+    <button class="btn sec" id="fVolver">${desdeActivo?'Seguir trabajando':'Cancelar'}</button>
+    ${editando?'<button class="btn peligro" id="fBorrar">Borrar este turno</button>':''}
+  </div>`;
+  const odo = $('#fOdo');
+  let tocado = millasSug!=='';
+  $('#fMillas').oninput = ()=>{ tocado = true; };
+  const revisar = ()=>{
+    const st = $('#fStride').value!=='' ? num($('#fStride').value) : null;
+    const oi = $('#fOdoI').value!=='' ? num($('#fOdoI').value) : null, of = odo.value!=='' ? num(odo.value) : null;
+    const od = (oi!=null && of!=null && of>oi) ? Math.round((of-oi)*10)/10 : null;
+    if (!tocado){ const v = st!=null ? st : od; $('#fMillas').value = v!=null ? v : ''; }
+    const box = $('#chequeo');
+    if (st!=null && od!=null){
+      const dif = od - st;
+      if (Math.abs(dif) <= Math.max(3, od*0.10)) box.innerHTML = `<div class="ok">Coinciden: Stride ${mi(st)}, odómetro ${mi(od)}.</div>`;
+      else if (dif>0) box.innerHTML = `<div class="aviso">El odómetro marca ${mi(dif)} más que Stride (${mi(od)} contra ${mi(st)}). ¿Stride empezó tarde o se detuvo? Si esas millas fueron de trabajo, escribe ${mi(od)} abajo. Si fueron personales, deja las de Stride.</div>`;
+      else box.innerHTML = `<div class="aviso">Stride marca más millas que el odómetro (${mi(st)} contra ${mi(od)}). Revisa los números del odómetro.</div>`;
+    } else if (od!=null && st==null) box.innerHTML = `<div class="small soft" style="margin-top:8px">Odómetro: ${mi(od)}. Si tienes el número de Stride, escríbelo arriba: es el registro que vale para impuestos.</div>`;
+    else box.innerHTML = '';
+  };
+  ['fStride','fOdoI','fOdo'].forEach(id=>$('#'+id).addEventListener('input', revisar));
+  revisar();
+  const sumar = ()=>{
+    const partes = ['fBase','fProp','fPromo'].map(id=>$('#'+id).value);
+    if (partes.some(v=>v!=='')) $('#fBruto').value = partes.reduce((a,v)=>a+num(v),0).toFixed(2);
+    const box = $('#chequeoPed'); const tot = num($('#fBruto').value);
+    if (sumaPed && tot && Math.abs(sumaPed-tot) > 0.5) box.innerHTML = `<div class="small soft" style="margin-top:8px">Las entregas que anotaste suman ${m2(sumaPed)} y el total es ${m2(tot)}. Normal si no anotaste todos o si hubo propinas después.</div>`;
+    else box.innerHTML = '';
+  };
+  ['fBase','fProp','fPromo'].forEach(id=>$('#'+id).addEventListener('input', sumar));
+  $('#fBruto').addEventListener('input', ()=>{ const box=$('#chequeoPed'); box.innerHTML=''; });
+  $('#fVolver').onclick = ()=>render();
+  if (editando) $('#fBorrar').onclick = ()=>{ if(confirm('¿Borrar este turno?')){ S.turnos = S.turnos.filter(x=>x.id!==t.id); guardar(); toast('Turno borrado'); ir('numeros'); } };
+  $('#fGuardar').onclick = ()=>{
+    const ini = new Date($('#fIni').value), f = new Date($('#fFin').value);
+    if (!(f>ini)) { toast('La hora de fin debe ser después del inicio'); return; }
+    if ($('#fBruto').value==='') { toast('Falta la ganancia del turno'); return; }
+    if ($('#fMillas').value==='') { toast('Faltan las millas (Stride u odómetro)'); return; }
+    const nuevo = {
+      id: t.id || uid(), inicio: ini.toISOString(), fin: f.toISOString(),
+      millas: num($('#fMillas').value), bruto: num($('#fBruto').value),
+      entregas: num($('#fEnt').value), gasolina: num($('#fGas').value), notas: $('#fNotas').value.trim(),
+      pedidos: t.pedidos || [],
+      stride: $('#fStride').value!=='' ? num($('#fStride').value) : null,
+      base: $('#fBase').value!=='' ? num($('#fBase').value) : null,
+      propinas: $('#fProp').value!=='' ? num($('#fProp').value) : null,
+      promos: $('#fPromo').value!=='' ? num($('#fPromo').value) : null,
+      minActivos: $('#fActivo').value!=='' ? num($('#fActivo').value) : null,
+      odoIni: $('#fOdoI').value!=='' ? num($('#fOdoI').value) : null,
+      odoFin: odo.value!=='' ? num(odo.value) : null
+    };
+    const i = S.turnos.findIndex(x=>x.id===nuevo.id);
+    if (i>=0) S.turnos[i]=nuevo; else S.turnos.push(nuevo);
+    S.turnos.sort((a,b)=>new Date(b.inicio)-new Date(a.inicio));
+    if (desdeActivo){ S.activo=null; }
+    guardar();
+    cierre(nuevo);
+  };
+}
+
+function cierre(t){
+  const r = reparto(t.bruto, t.millas);
+  const h = horasDe(t);
+  const hoy = resumen(periodo('hoy', t.inicio)), sem = resumen(periodo('semana', t.inicio)), mes = resumen(periodo('mes', t.inicio)), an = resumen(periodo('año', t.inicio));
+  const frase = h && (t.bruto - r.impuestos - r.auto)/h >= (resumen(S.turnos).netoHora||0) ? 'Este turno quedó por encima de tu promedio.' : 'Este turno quedó por debajo de tu promedio. Revisa la hora y la zona.';
+  $('#hdrTitulo').textContent = 'Listo';
+  $('#vista').innerHTML = `
+  <div class="card"><h2>Este turno</h2>
+    <div class="big">${m2(t.bruto)}</div>
+    <p class="soft" style="margin:2px 0 10px">${h1(h)} · ${mi(t.millas)}${h?` · ${m2((t.bruto-r.impuestos-r.auto)/h)} neto por hora`:''}</p>
+    ${S.turnos.length>1?`<div class="ok">${frase}</div>`:''}
+  </div>
+  <div class="card"><h2>A dónde va este dinero</h2>${sobresHTML(r)}</div>
+  <div class="card"><h2>Acumulado</h2>
+    <div class="row"><span>Hoy</span><b>${m2(hoy.bruto)}</b></div>
+    <div class="row"><span>Esta semana</span><b>${m2(sem.bruto)}</b></div>
+    <div class="row"><span>Este mes</span><b>${m2(mes.bruto)}</b></div>
+    <div class="row"><span>Este año</span><b>${m2(an.bruto)}</b></div>
+    <p class="small soft" style="margin:8px 0 0">Montos brutos. El neto está en Números.</p>
+  </div>
+  ${mañanaHTML()}
+  <button class="btn" onclick="ir('hoy')">Terminar</button>`;
+}
+function mañanaHTML(){
+  const man = iso(new Date(Date.now()+864e5)); const p = partidoEn(man); const t = temporadaDe(man);
+  if (!p && !t) return '';
+  return `<div class="card"><h2>Mañana</h2>${p?`<p style="margin:0 0 6px"><b>Partido en casa</b> contra ${esc(p.rival)}. Día fuerte.</p>`:''}
+    ${t?`<span class="pill ${t.nivel}">${NIVEL_TXT[t.nivel]}</span>`:''}<p class="small soft" style="margin:8px 0 0">Revisa el clima en Hoy antes de decidir.</p></div>`;
+}
+function sobresHTML(r){
+  const a = A();
+  return `
+    <div class="sobre"><div><div class="n">Impuestos</div><div class="d">${a.pctImpuestos}% de lo bruto</div></div><b>${m2(r.impuestos)}</b></div>
+    <div class="sobre"><div><div class="n">Auto</div><div class="d">${a.centavosMilla}¢ por milla</div></div><b>${m2(r.auto)}</b></div>
+    <div class="sobre"><div><div class="n">Crecimiento</div><div class="d">${a.pctCrecimiento}% de lo bruto${metaColchon()>0 && a.colchonActual<metaColchon()?' · va al colchón hasta llegar a la meta':''}</div></div><b>${m2(r.crecimiento)}</b></div>
+    <div class="sobre"><div><div class="n">Para ti</div><div class="d">Sueldo y colchón</div></div><b>${m2(r.paraTi)}</b></div>`;
+}
+
+/* ---------- Números ---------- */
+let perNum = 'semana';
+VISTAS.numeros = function(){
+  const lista = periodo(perNum);
+  const r = resumen(lista);
+  const pat = patrones();
+  const etiqueta = {semana:'Semana', mes:'Mes', 'año':'Año', todo:'Todo'};
+  let html = `<div class="tabs">${Object.keys(etiqueta).map(k=>`<button class="${k===perNum?'on':''}" onclick="perNum='${k}';render()">${etiqueta[k]}</button>`).join('')}</div>`;
+  html += `<div class="card"><h2>Resultado</h2>
+    <div class="big">${m2(r.neto)}</div><p class="soft small" style="margin:0 0 12px">neto: bruto menos auto e impuestos</p>
+    <div class="grid2">
+      <div class="stat"><div class="l">Bruto</div><div class="v">${$$(r.bruto)}</div></div>
+      <div class="stat"><div class="l">Neto por hora</div><div class="v">${r.horas?m2(r.netoHora):'—'}</div></div>
+      <div class="stat"><div class="l">Horas</div><div class="v">${h1(r.horas)}</div></div>
+      <div class="stat"><div class="l">Millas</div><div class="v">${mi(r.millas)}</div></div>
+      <div class="stat"><div class="l">Bruto por milla</div><div class="v">${r.millas?m2(r.porMilla):'—'}</div></div>
+      <div class="stat"><div class="l">Turnos</div><div class="v">${r.turnos}</div></div>
+    </div></div>`;
+  if (r.conDesglose){
+    const tot = r.base+r.propinas+r.promos;
+    const pct = v => tot ? Math.round(v/tot*100)+'%' : '—';
+    html += `<div class="card"><h2>De dónde vino el dinero</h2>
+      <div class="row"><span>Pago base</span><b>${m2(r.base)} <span class="soft small">${pct(r.base)}</span></b></div>
+      <div class="row"><span>Propinas</span><b>${m2(r.propinas)} <span class="soft small">${pct(r.propinas)}</span></b></div>
+      <div class="row"><span>Promociones</span><b>${m2(r.promos)} <span class="soft small">${pct(r.promos)}</span></b></div>
+      ${r.minActivos?`<div class="row"><span>Tiempo activo</span><b>${h1(r.minActivos/60)} de ${h1(r.horas)} <span class="soft small">${r.horas?Math.round(r.minActivos/60/r.horas*100)+'%':''}</span></b></div>`:''}
+      <p class="small soft" style="margin:8px 0 0">${r.conDesglose<r.turnos?`Con desglose en ${r.conDesglose} de ${r.turnos} turnos. `:''}El tiempo que no es activo es espera sin pago: bajarlo sube tu ganancia por hora.</p></div>`;
+  }
+  html += `<div class="card"><h2>Sobres del período</h2>${sobresHTML(r)}</div>`;
+  if (perNum==='semana'){
+    const clave = claveSemana(new Date());
+    const dep = (S.depositos||{})[clave];
+    let msg = '';
+    if (dep!=null){
+      const dif = dep - r.bruto;
+      msg = Math.abs(dif) <= 1 ? `<div class="ok">Cuadra: DoorDash ${m2(dep)}, Ruta ${m2(r.bruto)}.</div>`
+        : dif>0 ? `<div class="aviso">DoorDash dice ${m2(dep)} y Ruta tiene ${m2(r.bruto)}: falta anotar ${m2(dif)}. Puede ser un turno sin registrar o propinas que llegaron después. Revisa y corrige el turno.</div>`
+        : `<div class="aviso">Ruta tiene ${m2(-dif)} más que DoorDash (${m2(r.bruto)} contra ${m2(dep)}). Revisa si algún turno quedó con un número de más.</div>`;
+    }
+    html += `<div class="card"><h2>Cuadrar con DoorDash</h2>
+      <p class="small soft" style="margin-top:0">Una vez por semana, copia el total de la semana que muestra Dasher → Ganancias y compáralo con lo que anotaste.</p>
+      <label for="dep">Total de la semana en DoorDash ($)</label><input id="dep" inputmode="decimal" value="${dep!=null?dep:''}">
+      <button class="btn sec" id="btnDep">Comparar</button>${msg}</div>`;
+  }
+
+  if (perNum==='semana'){
+    const clave = claveSemana(new Date());
+    const hecho = S.semanasHechas.includes(clave);
+    const sueldo = sueldoSemanal();
+    let extra = '';
+    if (sueldo>0){
+      const sobra = r.paraTi - sueldo;
+      extra = sobra>=0 ? `<p>Págate <b>${m2(sueldo)}</b> y manda <b>${m2(sobra)}</b> al colchón.</p>`
+                       : `<p>Págate <b>${m2(sueldo)}</b>: <b>${m2(Math.max(0,r.paraTi))}</b> sale de esta semana y <b>${m2(-sobra)}</b> del colchón.</p>`;
+    }
+    html += `<div class="card"><h2>Mover el dinero</h2>${extra}
+      <p class="small soft">Cada semana, pasa los montos de los sobres de la cuenta del negocio a cada cuenta de ahorro.</p>
+      ${hecho?'<div class="ok">Ya moviste el dinero de esta semana.</div>':'<button class="btn" id="btnHecho">Ya moví el dinero de esta semana</button>'}</div>`;
+  }
+
+  const op = operaciones(lista);
+  if (op.entregados || op.rechazadas.n){
+    const fila = (g, extra) => `<div class="row"><span>${esc(g.nombre)} <span class="soft small">· ${g.n}</span>${extra?`<br><span class="small soft">${extra}</span>`:''}</span><b>${m2(g.prom)}</b></div>`;
+    html += `<div class="card"><h2>Restaurantes</h2>${op.restaurantes.slice(0,10).map(g=>fila(g,[g.porMilla!=null?m2(g.porMilla)+'/mi':'', g.espera!=null?'espera '+Math.round(g.espera)+' min':'', g.porHora?m2(g.porHora)+'/h en el viaje':''].filter(Boolean).join(' · '))).join('')||'<p class="soft small" style="margin:0">Sin datos todavía.</p>'}
+      <p class="small soft" style="margin:8px 0 0">Número de entregas y pago promedio. Una espera larga baja lo que ganas por hora.</p></div>`;
+    if (op.zonasEntrega.length) html += `<div class="card"><h2>Zonas de entrega</h2>${op.zonasEntrega.slice(0,10).map(g=>fila(g, g.porMilla!=null?m2(g.porMilla)+'/mi':'')).join('')}
+      <p class="small soft" style="margin:8px 0 0">Zonas aproximadas de Athens, según el GPS al marcar "Entregado".</p></div>`;
+    html += `<div class="card"><h2>Ofertas</h2>
+      <div class="row"><span>Aceptadas <span class="soft small">· ${op.aceptadas.n}</span></span><b>${m2(op.aceptadas.prom)}${op.aceptadas.porMilla!=null?` <span class="soft small">${m2(op.aceptadas.porMilla)}/mi</span>`:''}</b></div>
+      <div class="row"><span>Rechazadas <span class="soft small">· ${op.rechazadas.n}</span></span><b>${m2(op.rechazadas.prom)}${op.rechazadas.porMilla!=null?` <span class="soft small">${m2(op.rechazadas.porMilla)}/mi</span>`:''}</b></div>
+      ${op.cancelados?`<div class="row"><span>Canceladas</span><b>${op.cancelados}</b></div>`:''}
+      ${op.aceptadas.n+op.rechazadas.n?`<p class="small soft" style="margin:8px 0 0">Aceptas el ${Math.round(op.aceptadas.n/(op.aceptadas.n+op.rechazadas.n)*100)}% de las ofertas que anotas.</p>`:''}</div>`;
+    if (op.franjas.length) html += `<div class="card"><h2>Por horario</h2>${op.franjas.map(g=>fila(g,'')).join('')}<p class="small soft" style="margin:8px 0 0">Pago promedio por entrega según la hora en que aceptaste.</p></div>`;
+  }
+  html += `<div class="card"><h2>Turnos</h2><div class="lista">${lista.length?lista.map(t=>{ const rr=reparto(t.bruto,t.millas), h=horasDe(t);
+    return `<div class="item"><div class="row" style="border:0;padding:0"><span>${fechaLarga(t.inicio)}</span><b>${m2(t.bruto)}</b></div>
+      <div class="small soft">${hora(t.inicio)}–${hora(t.fin)} · ${h1(h)} · ${mi(t.millas)}${h?` · ${m2((t.bruto-rr.impuestos-rr.auto)/h)}/h neto`:''}</div>
+      <button class="linkbtn" onclick="editar('${t.id}')">Editar</button></div>`; }).join(''):'<p class="soft" style="margin:0">Todavía no hay turnos en este período.</p>'}</div></div>`;
+  $('#vista').innerHTML = html;
+  const bd = $('#btnDep');
+  if (bd) bd.onclick = ()=>{ S.depositos = S.depositos||{}; const v=$('#dep').value; if(v===''){ delete S.depositos[claveSemana(new Date())]; } else S.depositos[claveSemana(new Date())] = num(v); guardar(); render(); };
+  const b = $('#btnHecho');
+  if (b) b.onclick = ()=>{
+    const sueldo = sueldoSemanal(); const sobra = r.paraTi - sueldo;
+    const aColchon = metaColchon()>0 && A().colchonActual<metaColchon() ? r.crecimiento : 0;
+    if (sueldo>0) A().colchonActual = Math.max(0, A().colchonActual + sobra + aColchon);
+    S.semanasHechas.push(claveSemana(new Date())); guardar(); toast('Anotado. El colchón se actualizó.'); render();
+  };
+};
+window.editar = id => { const t = S.turnos.find(x=>x.id===id); if (t) formTurno(JSON.parse(JSON.stringify(t))); };
+
+/* ---------- Más ---------- */
+VISTAS.mas = function(){
+  $('#vista').innerHTML = `
+  <div class="card"><h2>Tu negocio</h2>
+    <button class="btn sec" onclick="abrirAjustes()">Ajustes y metas</button>
+    <button class="btn sec" onclick="abrirNegocios()">Lista de negocios para el paso 2 (${S.negocios.length})</button>
+    <button class="btn sec" onclick="abrirCalendario()">Calendario de temporadas</button>
+  </div>
+  <div class="card"><h2>Tus datos</h2>
+    <p class="small soft" style="margin-top:0">Todo se guarda solo en este teléfono. Haz un respaldo cada mes.</p>
+    <button class="btn sec" onclick="exportarClaude()">Exportar resumen (para Claude u otra persona)</button>
+    <button class="btn sec" onclick="respaldar()">Descargar respaldo</button>
+    <button class="btn sec" onclick="document.getElementById('archivo').click()">Restaurar respaldo</button>
+    <input type="file" id="archivo" accept="application/json,.json" class="hidden">
+  </div>
+  <p class="small soft" style="text-align:center">Ruta · funciona sin internet, excepto el clima.</p>`;
+  $('#archivo').onchange = e=>{
+    const f = e.target.files[0]; if(!f) return;
+    const rd = new FileReader();
+    rd.onload = ()=>{ try{ const d = JSON.parse(rd.result); if(!d.turnos) throw 0;
+      if(!confirm(`Esto reemplaza los datos actuales con el respaldo (${d.turnos.length} turnos). ¿Seguir?`)) return;
+      localStorage.setItem(KEY, JSON.stringify(d)); cargar(); toast('Respaldo restaurado'); ir('hoy');
+    }catch(err){ toast('Ese archivo no es un respaldo válido'); } };
+    rd.readAsText(f);
+  };
+};
+
+window.abrirAjustes = function(){
+  const a = A();
+  $('#hdrTitulo').textContent = 'Ajustes';
+  const campo = (id, et, val, ayuda='') => `<label for="${id}">${et}</label><input id="${id}" inputmode="decimal" value="${val}">${ayuda?`<p class="small soft" style="margin:4px 0 0">${ayuda}</p>`:''}`;
+  $('#vista').innerHTML = `<div class="card">
+    <label for="aNombre">Tu nombre</label><input id="aNombre" value="${esc(a.nombre)}">
+    ${campo('aLinea','Costo de vida mínimo al mes ($)',a.lineaMensual||'','Renta, comida, teléfono, auto, seguros. Tu sueldo semanal sale de aquí.')}
+    ${campo('aColchon','Lo que tienes hoy en el colchón ($)',a.colchonActual||0)}
+    ${campo('aMeses','Meta del colchón (meses de costo de vida)',a.mesesMeta,'Empieza con 1. Luego 3, y lo ideal son 6.')}
+    ${campo('aImp','Impuestos (% de lo bruto)',a.pctImpuestos)}
+    ${campo('aMilla','Fondo del auto (centavos por milla)',a.centavosMilla)}
+    ${campo('aCrec','Crecimiento (% de lo bruto)',a.pctCrecimiento)}
+    <div class="check"><input type="checkbox" id="aModo" ${a.modoCompleto?'checked':''}><label for="aModo" style="margin:0;color:var(--ink)">Modo completo: anotar cada oferta y cada viaje</label></div>
+    <p class="small soft" style="margin:0">Apagado (modo ligero), solo se anota el resumen al final del turno.</p>
+    ${campo('aMinMilla','Regla: mínimo por milla ($)',a.minMilla)}
+    ${campo('aMinOferta','Regla: mínimo por oferta ($)',a.minOferta)}
+    <button class="btn huge" id="aGuardar">Guardar</button>
+    <button class="btn sec" onclick="render()">Volver</button></div>`;
+  $('#aGuardar').onclick = ()=>{
+    Object.assign(a, {nombre:$('#aNombre').value.trim(), lineaMensual:num($('#aLinea').value), colchonActual:num($('#aColchon').value),
+      mesesMeta:num($('#aMeses').value)||1, pctImpuestos:num($('#aImp').value), centavosMilla:num($('#aMilla').value),
+      pctCrecimiento:num($('#aCrec').value), modoCompleto:$('#aModo').checked, minMilla:num($('#aMinMilla').value), minOferta:num($('#aMinOferta').value)});
+    guardar(); toast('Guardado'); ir('hoy');
+  };
+};
+
+window.abrirNegocios = function(){
+  $('#hdrTitulo').textContent = 'Negocios';
+  $('#vista').innerHTML = `<div class="card"><h2>Agregar</h2>
+    <p class="small soft" style="margin-top:0">Negocios que podrían contratarte directo en el paso 2: independientes, lentos, sin delivery propio, farmacias, flores.</p>
+    <label for="nNom">Nombre</label><input id="nNom">
+    <label for="nTipo">Tipo</label><select id="nTipo"><option>Restaurante</option><option>Farmacia</option><option>Floristería</option><option>Tienda</option><option>Catering</option><option>Oficina</option><option>Otro</option></select>
+    <label for="nNota">Por qué podría servir</label><textarea id="nNota" placeholder="Ej. siempre están saturados, preguntaron si hago entregas"></textarea>
+    <div class="check"><input type="checkbox" id="nInt"><label for="nInt" style="margin:0;color:var(--ink)">Dijeron que les interesa</label></div>
+    <button class="btn" id="nAdd">Agregar a la lista</button></div>
+    <div class="card"><h2>Tu lista · ${S.negocios.filter(n=>n.interes).length} interesados</h2><div class="lista">${S.negocios.length?S.negocios.map((n,i)=>`<div class="item">
+      <div class="row" style="border:0;padding:0"><b>${esc(n.nombre)}</b><span class="pill ${n.interes?'alta':'normal'}">${n.interes?'Interesado':esc(n.tipo)}</span></div>
+      ${n.nota?`<div class="small soft">${esc(n.nota)}</div>`:''}
+      <button class="linkbtn" onclick="toggleInt(${i})">${n.interes?'Quitar interés':'Marcar interesado'}</button> · <button class="linkbtn" onclick="borrarNeg(${i})">Borrar</button></div>`).join(''):'<p class="soft" style="margin:0">Todavía vacía. La meta para el paso 2 es tener 5 a 10 interesados.</p>'}</div></div>
+    <button class="btn sec" onclick="ir('mas')">Volver</button>`;
+  $('#nAdd').onclick = ()=>{ const n=$('#nNom').value.trim(); if(!n){toast('Falta el nombre');return;}
+    S.negocios.unshift({nombre:n, tipo:$('#nTipo').value, nota:$('#nNota').value.trim(), interes:$('#nInt').checked, fecha:iso(new Date())}); guardar(); abrirNegocios(); };
+};
+window.toggleInt = i => { S.negocios[i].interes = !S.negocios[i].interes; guardar(); abrirNegocios(); };
+window.borrarNeg = i => { if(confirm('¿Borrar este negocio?')){ S.negocios.splice(i,1); guardar(); abrirNegocios(); } };
+
+window.abrirCalendario = function(){
+  $('#hdrTitulo').textContent = 'Temporadas';
+  const hoy = iso(new Date());
+  $('#vista').innerHTML = `<div class="card"><h2>Temporadas de Athens</h2>${TEMPORADAS.map(t=>`<div class="row"><span>${esc(t.nombre)}<br><span class="small soft">${fechaCorta(t.ini)} – ${fechaCorta(t.fin)}${hoy>=t.ini&&hoy<=t.fin?' · ahora':''}</span></span><span class="pill ${t.nivel}">${NIVEL_TXT[t.nivel].replace('Temporada ','')}</span></div>`).join('')}</div>
+  <div class="card"><h2>Partidos de UGA en casa</h2>${PARTIDOS.map(p=>`<div class="row"><span>${esc(p.rival)}</span><b>${fechaCorta(p.fecha)}</b></div>`).join('')}</div>
+  <div class="card"><h2>Pagos de impuestos</h2>${IMPUESTOS_FECHAS.map(x=>`<div class="row"><span>Cubre ${x.cubre}</span><b>${fechaCorta(x.fecha)} ${x.fecha.slice(0,4)}</b></div>`).join('')}</div>
+  <button class="btn sec" onclick="ir('mas')">Volver</button>`;
+};
+
+/* ---------- Exportar ---------- */
+function csv(rows){ return rows.map(r=>r.map(c=>{ const s=String(c==null?'':c); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; }).join(',')).join('\n'); }
+function textoExport(){
+  const a = A(), r = resumen(S.turnos), sem = resumen(periodo('semana')), mes = resumen(periodo('mes'));
+  const lineas = [];
+  lineas.push(`Resumen de mi negocio de entregas en Athens, GA — exportado el ${iso(new Date())}`);
+  lineas.push('');
+  lineas.push(`Ajustes: costo de vida $${a.lineaMensual}/mes; colchón actual $${a.colchonActual.toFixed(2)} (meta ${a.mesesMeta} mes/es); impuestos ${a.pctImpuestos}%; auto ${a.centavosMilla}¢/milla; crecimiento ${a.pctCrecimiento}%; regla $${a.minMilla}/milla y $${a.minOferta} mínimo.`);
+  lineas.push(`Total: ${r.turnos} turnos, ${r.horas.toFixed(1)} h, ${r.millas.toFixed(1)} mi, bruto $${r.bruto.toFixed(2)}, neto $${r.neto.toFixed(2)}, neto/hora $${r.netoHora.toFixed(2)}.`);
+  lineas.push(`Esta semana: bruto $${sem.bruto.toFixed(2)}, ${sem.horas.toFixed(1)} h. Este mes: bruto $${mes.bruto.toFixed(2)}, ${mes.horas.toFixed(1)} h.`);
+  lineas.push('');
+  lineas.push('TURNOS (CSV)');
+  lineas.push(csv([['fecha','inicio','fin','horas','min_activos','millas','millas_stride','odometro_inicio','odometro_fin','bruto','pago_base','propinas','promociones','entregas','gasolina','notas'],
+    ...S.turnos.map(t=>[iso(t.inicio),hora(t.inicio),hora(t.fin),horasDe(t).toFixed(2),t.minActivos??'',t.millas,t.stride??'',t.odoIni??'',t.odoFin??'',t.bruto,t.base??'',t.propinas??'',t.promos??'',t.entregas||'',t.gasolina||'',t.notas||''])]));
+  const viajes = S.turnos.flatMap(t=>(t.pedidos||[]).map(p=>[iso(t.inicio), p.tAcepta?hora(p.tAcepta):'', estadoDe(p), p.restaurante||'', p.pago??'', p.millas??'',
+    p.millas?(num(p.pago)/num(p.millas)).toFixed(2):'', p.tLlega&&p.tRecoge?minEntre(p.tLlega,p.tRecoge):'', p.tAcepta&&p.tEntrega?minEntre(p.tAcepta,p.tEntrega):'',
+    p.zonaRecoge||'', p.zonaEntrega||'', p.pRecoge?p.pRecoge.lat:'', p.pRecoge?p.pRecoge.lon:'', p.pEntrega?p.pEntrega.lat:'', p.pEntrega?p.pEntrega.lon:'']));
+  if (viajes.length){ lineas.push(''); lineas.push('VIAJES Y OFERTAS (CSV). Coordenadas de entrega redondeadas a ~100 m por privacidad del cliente.');
+    lineas.push(csv([['fecha','hora_oferta','estado','restaurante','pago','millas','pago_por_milla','min_espera_restaurante','min_total','zona_recogida','zona_entrega','lat_recogida','lon_recogida','lat_entrega','lon_entrega'],...viajes])); }
+  if (S.negocios.length){ lineas.push(''); lineas.push('NEGOCIOS PARA EL PASO 2 (CSV)'); lineas.push(csv([['nombre','tipo','interesado','nota'],...S.negocios.map(n=>[n.nombre,n.tipo,n.interes?'sí':'no',n.nota||''])])); }
+  return lineas.join('\n');
+}
+window.exportarClaude = async function(){
+  const txt = textoExport();
+  $('#hdrTitulo').textContent = 'Exportar';
+  $('#vista').innerHTML = `<div class="card"><h2>Tu resumen</h2>
+    <p class="small soft" style="margin-top:0">Cópialo y pégalo en una conversación con Claude para pedir análisis, o compártelo.</p>
+    <textarea id="expTxt" style="min-height:260px;font-size:13px;font-family:ui-monospace,Menlo,monospace" readonly>${esc(txt)}</textarea>
+    <button class="btn" id="expCopiar">Copiar</button>
+    ${navigator.share?'<button class="btn sec" id="expCompartir">Compartir</button>':''}
+    <button class="btn sec" onclick="ir('mas')">Volver</button></div>`;
+  $('#expCopiar').onclick = async ()=>{
+    try{ await navigator.clipboard.writeText(txt); toast('Copiado'); }
+    catch(e){ const ta=$('#expTxt'); ta.removeAttribute('readonly'); ta.select(); document.execCommand('copy'); ta.setAttribute('readonly',''); toast('Copiado'); }
+  };
+  const c = $('#expCompartir'); if (c) c.onclick = ()=>navigator.share({title:'Resumen Ruta', text:txt}).catch(()=>{});
+};
+window.respaldar = function(){
+  const blob = new Blob([JSON.stringify(S,null,1)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `ruta-respaldo-${iso(new Date())}.json`;
+  document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  toast('Respaldo descargado');
+};
+
+/* ================== Instalar ================== */
+let promptInstalar = null;
+const yaInstalada = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const esIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+const enAppAjena = () => /FBAN|FBAV|Instagram|WhatsApp|Line\//i.test(navigator.userAgent);
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); promptInstalar = e; if (vistaActual==='hoy') render(); });
+window.addEventListener('appinstalled', () => { promptInstalar = null; toast('Ruta quedó instalada'); render(); });
+function instalarHTML(){
+  if (yaInstalada()) return '';
+  if (promptInstalar) return `<div class="card" style="border:2px solid var(--brand)"><h2>Instala Ruta</h2>
+    <p style="margin:0">Ponla en tu pantalla de inicio para abrirla como cualquier app, también sin internet.</p>
+    <button class="btn huge" onclick="instalar()">Instalar</button></div>`;
+  if (esIOS()) return `<div class="card" style="border:2px solid var(--brand)"><h2>Instala Ruta</h2>
+    ${enAppAjena()?'<div class="aviso" style="margin-top:0">Primero abre este enlace en <b>Safari</b> (toca los tres puntos o el ícono de brújula).</div>':''}
+    <p style="margin:8px 0 0">En iPhone son dos toques:</p>
+    <ol style="margin:6px 0 0;padding-left:20px"><li>Toca <b>Compartir</b> (el cuadro con la flecha hacia arriba).</li><li>Toca <b>Agregar a pantalla de inicio</b>.</li></ol>
+    <p class="small soft" style="margin:8px 0 0">Instalada, tus datos quedan seguros en el teléfono.</p></div>`;
+  return `<div class="card"><h2>Instala Ruta</h2>
+    <p style="margin:0">Abre el menú del navegador <b>⋮</b> y toca <b>Instalar app</b> o <b>Agregar a pantalla principal</b>.${enAppAjena()?' Si la abriste desde WhatsApp, primero toca <b>Abrir en Chrome</b>.':''}</p></div>`;
+}
+window.instalar = async () => { if (!promptInstalar) return; promptInstalar.prompt(); const r = await promptInstalar.userChoice.catch(()=>null); promptInstalar = null; render(); };
+
+/* ================== Arranque ================== */
+render();
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
